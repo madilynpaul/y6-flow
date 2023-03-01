@@ -124,7 +124,8 @@ def sample(job):
             final_box_lengths=target_box,
             n_steps=job.sp.shrink_steps,
             period=job.sp.shrink_period,
-            tau_kt=job.sp.tau_kt
+            tau_kt=job.sp.tau_kt,
+            kT=job.sp.shrink_kT
     )
     y6_sim.run_NVT(kT=job.sp.kT, n_steps=job.sp.n_steps, tau_kt=job.sp.tau_kt)
 
