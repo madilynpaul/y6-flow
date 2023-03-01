@@ -84,50 +84,60 @@ def sample(job):
         ff_file = "../../Y6.xml"
         ff_path = os.path.join(os.getcwd(), ff_file)
 
-    def espaloma_mol(file_path, remove_hydrogens=False):
-        mol = mb.load(file_path)
-        if remove_hydrogens:
-            h_atoms = [p for p in mol.particles_by_element(element="H")]
-            for p in h_atoms:
-                mol.remove(p)
-        for p in mol.particles():
-            p.name = f"_{p.name}"
-        return mol
+        def espaloma_mol(file_path, remove_hydrogens=False):
+            mol = mb.load(file_path)
+            if remove_hydrogens:
+                h_atoms = [p for p in mol.particles_by_element(element="H")]
+                for p in h_atoms:
+                    mol.remove(p)
+            for p in mol.particles():
+                p.name = f"_{p.name}"
+            return mol
 
-    y6_system = Pack(
-            molecule=espaloma_mol,
-            density=job.sp.density,
-            n_mols=job.sp.n_compounds,
-            mol_kwargs = {
-                "file_path": mol_path,
-                "remove_hydrogens": job.sp.remove_hydrogens
-            },
-            packing_expand_factor=5
-    )
+        y6_system = Pack(
+                molecule=espaloma_mol,
+                density=job.sp.density,
+                n_mols=job.sp.n_compounds,
+                mol_kwargs = {
+                    "file_path": mol_path,
+                    "remove_hydrogens": job.sp.remove_hydrogens
+                },
+                packing_expand_factor=3
+        )
 
-    y6_ff = foyer.Forcefield(forcefield_files=ff_path)
-    y6_system.apply_forcefield(forcefield=y6_ff, make_charge_neutral=True)
+        y6_ff = foyer.Forcefield(forcefield_files=ff_path)
+        y6_system.apply_forcefield(forcefield=y6_ff, make_charge_neutral=True)
 
-    job.doc.ref_distance = y6_system.reference_values.distance
-    job.doc.ref_mass = y6_system.reference_values.mass
-    job.doc.ref_energy = y6_system.reference_values.energy
+        job.doc.ref_distance = y6_system.reference_values.distance
+        job.doc.ref_mass = y6_system.reference_values.mass
+        job.doc.ref_energy = y6_system.reference_values.energy
 
-    y6_sim = Simulation(
-        initial_state=y6_system.hoomd_snapshot,
-        forcefield=y6_system.hoomd_forcefield,
-        gsd_write_freq=5000
-    )
-    target_box = (y6_system.target_box*10)/job.doc.ref_distance
-    job.doc.target_box = target_box
+        gsd_path = os.path.join(job.ws, "trajectory.gsd")
+        log_path = os.path.join(job.ws, "sim_data.txt")
 
-    y6_sim.run_update_volume(
-            final_box_lengths=target_box,
-            n_steps=job.sp.shrink_steps,
-            period=job.sp.shrink_period,
-            tau_kt=job.sp.tau_kt,
-            kT=job.sp.shrink_kT
-    )
-    y6_sim.run_NVT(kT=job.sp.kT, n_steps=job.sp.n_steps, tau_kt=job.sp.tau_kt)
+        y6_sim = Simulation(
+            initial_state=y6_system.hoomd_snapshot,
+            forcefield=y6_system.hoomd_forcefield,
+            gsd_write_freq=5000,
+            gsd_file_name=gsd_path,
+            log_file_name=log_path,
+            log_write_freq=500
+        )
+        target_box = y6_system.target_box*10/job.doc.ref_distance
+        job.doc.target_box = target_box
+
+        y6_sim.run_update_volume(
+                final_box_lengths=target_box,
+                n_steps=job.sp.shrink_steps,
+                period=job.sp.shrink_period,
+                tau_kt=job.sp.tau_kt,
+                kT=job.sp.shrink_kT
+        )
+        y6_sim.run_NVT(
+                kT=job.sp.kT,
+                n_steps=job.sp.n_steps,
+                tau_kt=job.sp.tau_kt
+        )
 
 
 if __name__ == "__main__":

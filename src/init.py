@@ -24,7 +24,7 @@ def get_parameters():
 
     ### SYSTEM GENERATION PARAMETERS ###
     parameters["density"] = [0.8]
-    parameters["n_compounds"] = [25]
+    parameters["n_compounds"] = [50]
     parameters["system_kwargs"] = [None]
     parameters["remove_hydrogens"] = [True]
 
@@ -34,7 +34,7 @@ def get_parameters():
     parameters["r_cut"] = [2.5]
     parameters["sim_seed"] = [42]
     parameters["shrink_steps"] = [1e6]
-    parameters["shrink_period"] = [1]
+    parameters["shrink_period"] = [10000]
     parameters["shrink_kT"] = [3.0]
     ### Quench related parameters ###
     parameters["kT"] = [2.0]
