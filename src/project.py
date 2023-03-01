@@ -70,7 +70,6 @@ def initialized(job):
 @MyProject.post(sampled)
 def sample(job):
     import hoomd_polymers
-    import hoomd.polymers.molecules
     from hoomd_polymers.systems import Pack
     import hoomd_polymers.forcefields
     from hoomd_polymers.sim import Simulation
