@@ -108,9 +108,9 @@ def sample(job):
     y6_ff = foyer.Forcefield(forcefield_files=ff_path)
     y6_system.apply_forcefield(forcefield=y6_ff)
 
-    job.doc.ref_distance = y6_system.references_values.distance
-    job.doc.ref_mass = y6_system.references_values.mass
-    job.doc.ref_energy = y6_system.references_values.energy
+    job.doc.ref_distance = y6_system.reference_values.distance
+    job.doc.ref_mass = y6_system.reference_values.mass
+    job.doc.ref_energy = y6_system.reference_values.energy
 
     y6_sim = Simulation(
         initial_state=y6_system.hoomd_snapshot,
