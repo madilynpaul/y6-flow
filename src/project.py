@@ -80,7 +80,9 @@ def sample(job):
         print("JOB ID NUMBER:")
         print(job.id)
         y6_file = "../../y6_typed.mol2"
+        mol_path = os.path.join(os.getcwd(), y6_file)
         ff_file = "../../Y6.xml"
+        ff_path = os.path.join(os.getcwd(), ff_file)
 
     def espaloma_mol(file_path, remove_hydrogens=False):
         mol = mb.load(file_path)
@@ -97,13 +99,13 @@ def sample(job):
             density=job.sp.density,
             n_mols=job.sp.n_compounds,
             mol_kwargs = {
-                "file_path": y6_file,
+                "file_path": mol_path,
                 "remove_hydrogens": job.sp.remove_hydrogens
             },
             packing_expand_factor=5
     )
 
-    y6_ff = foyer.Forcefield(forcefield_files=ff_file)
+    y6_ff = foyer.Forcefield(forcefield_files=ff_path)
     y6_system.apply_forcefield(forcefield=y6_ff)
 
     job.doc.ref_distance = y6_system.references_values.distance
