@@ -106,7 +106,7 @@ def sample(job):
     )
 
     y6_ff = foyer.Forcefield(forcefield_files=ff_path)
-    y6_system.apply_forcefield(forcefield=y6_ff)
+    y6_system.apply_forcefield(forcefield=y6_ff, make_charge_neutral=True)
 
     job.doc.ref_distance = y6_system.reference_values.distance
     job.doc.ref_mass = y6_system.reference_values.mass
@@ -121,7 +121,7 @@ def sample(job):
     job.doc.target_box = target_box
 
     y6_sim.run_update_volume(
-            final_box=target_box,
+            final_box_lengths=target_box,
             n_steps=job.sp.shrink_steps,
             period=job.sp.shrink_period,
             tau_kt=job.sp.tau_kt
