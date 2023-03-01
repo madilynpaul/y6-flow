@@ -39,9 +39,10 @@ def get_parameters():
     ### Quench related parameters ###
     parameters["kT"] = [2.0]
     parameters["n_steps"] = [5e6]
+    return list(parameters.keys()), list(product(*parameters.values()))
 
 def main():
-    project = signac.init_project() # Set the signac project name
+    project = signac.init_project("y6_espaloma") # Set the signac project name
     param_names, param_combinations = get_parameters()
     # Create the generate jobs
     for params in param_combinations:

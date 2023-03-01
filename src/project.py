@@ -101,7 +101,7 @@ def sample(job):
                 "file_path": y6_file,
                 "remove_hydrogens": job.sp.remove_hydrogens
             },
-            packing_expand_factor=3
+            packing_expand_factor=5
     )
 
     y6_ff = foyer.Forcefield(forcefield_files=ff_file)
