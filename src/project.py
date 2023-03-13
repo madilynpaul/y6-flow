@@ -107,9 +107,9 @@ def sample(job):
                 remove_hydrogens=job.sp.remove_hydrogens
         )
 
-        job.doc.ref_distance = y6_system.reference_values.distance
-        job.doc.ref_mass = y6_system.reference_values.mass
-        job.doc.ref_energy = y6_system.reference_values.energy
+        job.doc.ref_distance = y6_system.reference_distance
+        job.doc.ref_mass = y6_system.reference_mass
+        job.doc.ref_energy = y6_system.reference_energy
 
         gsd_path = os.path.join(job.ws, "trajectory.gsd")
         log_path = os.path.join(job.ws, "sim_data.txt")
