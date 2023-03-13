@@ -84,12 +84,8 @@ def sample(job):
         ff_file = "../../Y6.xml"
         ff_path = os.path.join(os.getcwd(), ff_file)
 
-        def espaloma_mol(file_path, remove_hydrogens=False):
+        def espaloma_mol(file_path):
             mol = mb.load(file_path)
-            if remove_hydrogens:
-                h_atoms = [p for p in mol.particles_by_element(element="H")]
-                for p in h_atoms:
-                    mol.remove(p)
             for p in mol.particles():
                 p.name = f"_{p.name}"
             return mol
@@ -100,13 +96,16 @@ def sample(job):
                 n_mols=job.sp.n_compounds,
                 mol_kwargs = {
                     "file_path": mol_path,
-                    "remove_hydrogens": job.sp.remove_hydrogens
                 },
-                packing_expand_factor=3
+                packing_expand_factor=5
         )
 
         y6_ff = foyer.Forcefield(forcefield_files=ff_path)
-        y6_system.apply_forcefield(forcefield=y6_ff, make_charge_neutral=True)
+        y6_system.apply_forcefield(
+                forcefield=y6_ff,
+                make_charge_neutral=True,
+                remove_hydrogens=job.sp.remove_hydrogens
+        )
 
         job.doc.ref_distance = y6_system.reference_values.distance
         job.doc.ref_mass = y6_system.reference_values.mass

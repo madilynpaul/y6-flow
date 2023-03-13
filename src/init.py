@@ -23,7 +23,7 @@ def get_parameters():
     parameters = OrderedDict()
 
     ### SYSTEM GENERATION PARAMETERS ###
-    parameters["density"] = [0.8]
+    parameters["density"] = [0.7, 0.8, 0.9, 1.1]
     parameters["n_compounds"] = [50]
     parameters["system_kwargs"] = [None]
     parameters["remove_hydrogens"] = [True]
@@ -37,7 +37,7 @@ def get_parameters():
     parameters["shrink_period"] = [10000]
     parameters["shrink_kT"] = [3.0]
     ### Quench related parameters ###
-    parameters["kT"] = [2.0]
+    parameters["kT"] = [2.0, 3.0, 3.5, 4.0, 4.5, 5.0]
     parameters["n_steps"] = [5e6]
     return list(parameters.keys()), list(product(*parameters.values()))
 
