@@ -79,8 +79,8 @@ def sample(job):
     with job:
         print("JOB ID NUMBER:")
         print(job.id)
-        y6_file = "../../y6_typed.mol2"
-        mol_path = os.path.join(os.getcwd(), y6_file)
+        system_file = "../../y6_typed.mol2"
+        mol_path = os.path.join(os.getcwd(), system_file)
         ff_file = "../../Y6.xml"
         ff_path = os.path.join(os.getcwd(), ff_file)
 
@@ -90,7 +90,7 @@ def sample(job):
                 p.name = f"_{p.name}"
             return mol
 
-        y6_system = Pack(
+        system = Pack(
                 molecule=espaloma_mol,
                 density=job.sp.density,
                 n_mols=job.sp.n_compounds,
@@ -100,39 +100,39 @@ def sample(job):
                 packing_expand_factor=5
         )
 
-        y6_ff = foyer.Forcefield(forcefield_files=ff_path)
-        y6_system.apply_forcefield(
-                forcefield=y6_ff,
+        system_ff = foyer.Forcefield(forcefield_files=ff_path)
+        system.apply_forcefield(
+                forcefield=system_ff,
                 make_charge_neutral=True,
                 remove_hydrogens=job.sp.remove_hydrogens
         )
 
-        job.doc.ref_distance = y6_system.reference_distance
-        job.doc.ref_mass = y6_system.reference_mass
-        job.doc.ref_energy = y6_system.reference_energy
+        job.doc.ref_distance = system.reference_distance
+        job.doc.ref_mass = system.reference_mass
+        job.doc.ref_energy = system.reference_energy
 
         gsd_path = os.path.join(job.ws, "trajectory.gsd")
         log_path = os.path.join(job.ws, "sim_data.txt")
 
-        y6_sim = Simulation(
-            initial_state=y6_system.hoomd_snapshot,
-            forcefield=y6_system.hoomd_forcefield,
+        system_sim = Simulation(
+            initial_state=system.hoomd_snapshot,
+            forcefield=system.hoomd_forcefield,
             gsd_write_freq=5000,
             gsd_file_name=gsd_path,
             log_file_name=log_path,
             log_write_freq=500
         )
-        target_box = y6_system.target_box*10/job.doc.ref_distance
+        target_box = system.target_box*10/job.doc.ref_distance
         job.doc.target_box = target_box
 
-        y6_sim.run_update_volume(
+        system_sim.run_update_volume(
                 final_box_lengths=target_box,
                 n_steps=job.sp.shrink_steps,
                 period=job.sp.shrink_period,
                 tau_kt=job.sp.tau_kt,
                 kT=job.sp.shrink_kT
         )
-        y6_sim.run_NVT(
+        system_sim.run_NVT(
                 kT=job.sp.kT,
                 n_steps=job.sp.n_steps,
                 tau_kt=job.sp.tau_kt
